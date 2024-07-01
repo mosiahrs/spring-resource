@@ -1,0 +1,228 @@
+{
+	"info": {
+		"_postman_id": "7619fb41-3687-4694-840d-bba077232219",
+		"name": "api-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12612970"
+	},
+	"item": [
+		{
+			"name": "resources",
+			"item": [
+				{
+					"name": "new resource",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Toyota\",\n    \"tags\": [\n        {\n            \"value\": \"Corolla\"\n        },\n        {\n            \"value\": \"SUV\"\n        },\n        {\n            \"value\": \"Sedan\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}resources",
+							"host": [
+								"{{url}}resources"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list resources",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}resources?page=0&size=10&name=Toyota&tag=SUV",
+							"host": [
+								"{{url}}resources"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "name",
+									"value": "Toyota"
+								},
+								{
+									"key": "tag",
+									"value": "SUV"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new tags",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tags\": [\n        {\n            \"value\": \"Vehicle\"\n        },\n        {\n            \"value\": \"Japan\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}resources/1/tags",
+							"host": [
+								"{{url}}resources"
+							],
+							"path": [
+								"1",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete resource",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}resources/1",
+							"host": [
+								"{{url}}resources"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete tags",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}resources/1/tags?tag=Japan,Corolla",
+							"host": [
+								"{{url}}resources"
+							],
+							"path": [
+								"1",
+								"tags"
+							],
+							"query": [
+								{
+									"key": "tag",
+									"value": "Japan,Corolla"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "authenticate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var body = pm.response.json();",
+							"",
+							"pm.environment.set('token', body.token);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "username",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}authenticate",
+					"host": [
+						"{{url}}authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "private",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}private",
+					"host": [
+						"{{url}}private"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

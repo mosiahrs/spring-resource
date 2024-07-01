@@ -1,0 +1,397 @@
+openapi: 3.0.3
+info:
+  title: Swagger Resource - OpenAPI 3.0
+  description: |-
+    Api de recursos
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost/api
+tags:
+  - name: Resources
+    description: Api de recursos
+    externalDocs:
+      description: Mais
+      url: http://swagger.io
+
+paths:
+  /resources:
+    post:
+      tags:
+        - resources
+      summary: Adiciona um novo resource
+      description: Adiciona um novo resource
+      operationId: addResource
+      requestBody:
+        description: Cria um novo resource
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseInvalidResourceValue'
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseValidationError'
+
+
+    get:
+      tags:
+        - resources
+      summary: Listagem de recursos
+      description: Lista os recursos paginados
+      operationId: findResources
+      parameters:
+        - name: page
+          in: query
+          description: Numero da página
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: tamanho da página
+          required: false
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: Nome do recurso
+          required: false
+          schema:
+            type: string
+        - name: tag
+          in: query
+          description: nome da tag
+          required: false
+          schema:
+            type: string
+
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResource'
+        '400':
+          description: Invalid status value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseInvalidResourceValue'
+
+  /resources/{id}/tags:
+    put:
+      tags:
+        - tags
+      summary: Atualiza um recurso existente adicionando tags ao mesmo
+      description: Atualiza um recurso adicionando novas tags
+      operationId: updateResource
+      parameters:
+        - name: id
+          in: path
+          description: id of resource
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Atualiza um recurso existente
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagRequestUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceResponse'
+        '400':
+          description: Invalid ID supplied or payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseInvalidResourceValue'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseNotFound'
+
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseValidationError'
+
+    delete:
+      tags:
+        - tags
+      summary: Deleta as tags associadas a um dado recurso
+      description: Deleta tags, o query param tag pode receber um ou mais tags separadas por vírgula
+      operationId: deleteTag
+      parameters:
+        - name: id
+          in: path
+          description: id of resource
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tag
+          in: query
+          required: true
+          schema:
+            type: string
+            example: Japan,Corolla
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceResponse'
+
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseValidationError'
+        '400':
+          description: Invalid resource value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseInvalidResourceValue'
+        '404':
+          description: Resource Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseNotFound'
+
+  /resources/{id}:
+    delete:
+      tags:
+        - resources
+      summary: Deleta um recurso e suas tags associadas
+      description: Deleta um recurso
+      operationId: deleteResource
+      parameters:
+        - name: id
+          in: path
+          description: Resource name to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseValidationError'
+        '400':
+          description: Invalid resource value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseInvalidResourceValue'
+        '404':
+          description: Resource Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseNotFound'
+
+components:
+  schemas:
+
+    ResourceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Toyota
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagRequest'
+
+    TagRequestUpdate:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagRequest'
+
+    TagRequest:
+      type: object
+      properties:
+        value:
+          type: string
+          example: flex
+
+    ResourceResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 23
+        name:
+          type: string
+          example: Toyota
+        createDate:
+          type: string
+          format: date-time
+        updateDate:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponse'
+
+    PageResource:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceResponse'
+        totalElements:
+          type: integer
+          format: int64
+          example: 5
+        totalPages:
+          type: integer
+          format: int32
+        last:
+          type: boolean
+          example: false
+        numberOfElements:
+          type: integer
+          format: int64
+        first:
+          type: boolean
+          example: false
+        size:
+          type: integer
+          example: 2
+        number:
+          type: integer
+          example: 0
+
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sort'
+
+    Sort:
+      type: object
+      properties:
+        direction:
+          type: array
+          items:
+            $ref: '#/components/schemas/DIRECTION'
+        property:
+          type: string
+          example: createDate
+        ignoreCase:
+          type: boolean
+          example: true
+        nullHandling:
+          type: string
+          example: NATIVE
+        ascending:
+          type: boolean
+          example: false
+
+    DIRECTION:
+      type: string
+      enum:
+        - ASC
+        - DESC
+
+
+    TagResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 45
+        value:
+          type: string
+          example: flex
+
+
+    ErrorResponseValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1011
+        message:
+          type: string
+          example: "Validation error"
+
+    ErrorResponseInvalidResourceValue:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1013
+        message:
+          type: string
+          example: "Error. Invalid value on resource"
+
+    ErrorResponseNotFound:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 1014
+        message:
+          type: string
+          example: "Resource not found"

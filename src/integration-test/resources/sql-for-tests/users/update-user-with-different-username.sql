@@ -1,0 +1,1 @@
+update tb_users set username = 'another' where id_user = 1;
